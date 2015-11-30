@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <link rel="stylesheet" href="/javascripts/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="/javascripts/dojo/gridx/resources/Gridx.css">
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow:hidden;
+        }
+
+        #borderContainerTwo {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script>dojoConfig = {parseOnLoad: true}</script>
+    <script src="/javascripts/dojo//dojo/dojo.js"></script>
+    <script>
+        require([
+            "gridx/Grid",
+            "gridx/core/model/cache/Sync",
+            "gridx/modules/Pagination",
+            "gridx/modules/pagination/PaginationBar",
+            "gridx/modules/move/Row",
+            "gridx/modules/Bar",
+            "gridx/modules/HeaderMenu",
+            "dojo/store/Memory", // "dojo/store/JsonRest",
+            "dijit/layout/AccordionContainer",
+            "dijit/layout/ContentPane",
+            "dojo/request",
+
+            "dijit/layout/TabContainer",
+            "dijit/layout/BorderContainer",
+            "dojo/parser",
+            "dojo/domReady!"
+        ], function(Grid, Cache,
+                    Pagination, PaginationBar, MoveRow,
+                    Bar, HeaderMenu, Store, AccordionContainer, ContentPane, request){
+            // 菜单布局
+            var menuContainer = new AccordionContainer({minSize:20, region:'leading', splitter:true}, "admin_index_menu_container");
+            request("/admin/getMenus",{
+                handleAs: "json"
+            }).then(function(json){
+                if (0 === json.flag) {
+                    var len = json.result.length;
+                    var i;
+                    var j;
+                    var title;
+                    var content;
+                    for (i = 1; i < len; ++i ) {
+                        j = i + 1;
+                        content = '';
+                        while (j < len && 2 === json.result[j].level) {
+                            content += json.result[j].title + " <br />";
+                            ++j;
+                        }
+
+//                            if ('' != content) {
+                        menuContainer.addChild(new ContentPane({
+                            title: json.result[i].title,
+                            content: content
+                        }));
+//                            }
+                        i = --j;
+                    }
+                }
+                else {
+                    alert(json.message);
+                }
+            });
+
+//            menuContainer.addChild(new ContentPane({
+//                title: "This is a content pane",
+//                content: "Hi!"
+//            }));
+//
+//            menuContainer.addChild(new ContentPane({
+//                title:"This is as well",
+//                content:"Hi how are you?"
+//            }));
+//            menuContainer.addChild(new ContentPane({
+//                title:"This too",
+//                content:"Hello im fine.. thnx"
+//            }));
+            menuContainer.startup();
+
+            // tab布局
+
+
+            // Create store here...
+            var store = new Store({data:[{Genre:111, id:"aaa"}, {Genre:222, id:"bbb"}]}); //[,{"Genre":222, "id":"bbb"}]
+
+
+            var grid = new Grid({
+                store: store,
+                cacheClass: Cache,
+                structure: [
+                    { id: "genre",	field: "Genre",	name: "Genre",	width: "100px",	editable: false },
+                    { id: "id",	field: "id",	name: "ID",	width: "50px",	editable: false }
+                ],
+                modules: [
+                    Pagination,
+                    PaginationBar,
+                    Bar
+                ]
+            });
+
+            grid.placeAt("gridContainerNode");
+            grid.startup();
+        });
+    </script>
+</head>
+<body class="claro">
+<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters:true, liveSplitters:false" id="borderContainerTwo">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top', splitter:false">
+        后台管理系统
+    </div>
+    <div id="admin_index_menu_container" style="width: 250px"></div><!-- menu container -->
+
+    <div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true">
+        <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="selected: 'true'" title="首页" >
+        </div>
+        <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="closable:true" title="菜单管理">
+            <div id="gridContainerNode"></div>
+        </div>
+    </div><!-- end TabContainer -->
+</div><!-- end BorderContainer -->
+</body>
+</html>
