@@ -39,7 +39,7 @@ BEGIN
 	 
 
 	sql_str='
-		SELECT
+		(SELECT
 		pg_attribute.attname "field",
 		pg_attribute.attnum "index",
 		pg_type.typname "type",
@@ -62,7 +62,25 @@ BEGIN
 	WHERE
 		pg_attribute.attnum > 0
 		AND attisdropped <> ''t''
-	ORDER BY "index"';
+	ORDER BY "index")
+	union all
+	(
+		'SELECT
+        pa.attname "field",
+        pa.attnum "index",
+        pt.typname "type",
+        true "allowNull",
+        '''' "defaultValue",
+        '''' "comment",
+        false "unique",
+        false "primaryKey"
+        from
+        pg_attribute pa
+        INNER JOIN pg_class pc on (pc.relkind=''v'' and pc.relname=''' || table_name || ''' and pa.attrelid = pc.oid)
+        INNER JOIN pg_namespace pn on (pc.relnamespace = pn.oid AND lower(pn.nspname) = ''' || schema_name || ''')
+        INNER JOIN pg_type pt ON (pa.atttypid = pt.oid)'
+	)
+	';
 
 	FOR func_result IN EXECUTE sql_str LOOP
 		t_struct."field" = func_result."field";
