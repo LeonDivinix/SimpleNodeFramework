@@ -1,6 +1,7 @@
 /**
  * Created by leon on 15/11/21.
- * 获得数据库连接
+ * 单数据库应用
+ * 连接池
  */
 var conf = require("../config");
 var Sequelize = require('sequelize');
