@@ -14,12 +14,12 @@ $BODY$
 DECLARE
 	 func_result varchar;
 BEGIN
-		IF field_type == 'int8' THEN func_result := 'BIGINT';
-		ELSIF field_type == 'int4' THEN func_result := 'INTEGER';
-		ELSIF field_type == 'int2' THEN func_result := 'INTEGER';
-		ELSIF field_type == 'bpchar' THEN func_result := 'CHAR';
-		ELSIF field_type == 'timestamp' THEN func_result := 'TIME';
-		ELSIF field_type == 'json' THEN func_result := 'JSONTYPE';
+		IF field_type = 'int8' THEN func_result := 'BIGINT';
+		ELSIF field_type = 'int4' THEN func_result := 'INTEGER';
+		ELSIF field_type = 'int2' THEN func_result := 'INTEGER';
+		ELSIF field_type = 'bpchar' THEN func_result := 'CHAR';
+		ELSIF field_type = 'timestamp' THEN func_result := 'TIME';
+		ELSIF field_type = 'json' THEN func_result := 'JSONTYPE';
 	ELSE
 		func_result := upper(field_type);
 	 END IF;
@@ -42,7 +42,7 @@ BEGIN
 		(SELECT
 		pg_attribute.attname "field",
 		pg_attribute.attnum "index",
-		pg_type.typname "type",
+		to_sequelize_data_type(pg_type.typname::varchar) "type",
 		not pg_attribute.attnotnull "allowNull",
 		COALESCE(pg_attrdef.adsrc, '''') "defaultValue",
 		COALESCE(pg_description.description, '''') "comment",

@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 /**
  * 配置
  */
-var config = require('./config');
+var config = require('./config/config');
 
 var app = express();
 
@@ -50,7 +50,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'))); //
 
 // 加载路由跳转
-var controllers = require('./controller');
+var controllers = require('./config/controller');
 var len = controllers.length;
 var i = 0;
 while (i < len) {
