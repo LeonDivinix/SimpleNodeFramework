@@ -398,7 +398,7 @@ return declare("dojox.data.ServiceStore",
 		fetchItemByIdentity: function(args){
 			// summary:
 			//		fetch an item by its identity, by looking in our index of what we have loaded
-			var item = this._index[(args._prefix || '') + args.identity];
+			var item = this._index[(args.prefix || '') + args.identity];
 			if(item){
 				// the item exists in the index
 				if(item._loadObject){

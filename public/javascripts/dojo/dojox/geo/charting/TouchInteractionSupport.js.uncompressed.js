@@ -12,7 +12,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 		// tags:
 		//		private
 
-		_map: null,
+		map: null,
 		_centerTouchLocation: null,
 		_touchMoveListener: null,
 		_touchEndListener: null,
@@ -32,7 +32,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			//		Constructs a new _TouchInteractionSupport instance
 			// map: dojox.geo.charting.Map
 			//		the Map widget this class provides touch navigation for.
-			this._map = map;
+			this.map = map;
 			this._centerTouchLocation = {x: 0,y: 0};
 
 			this._tapCount = 0;
@@ -43,7 +43,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 		connect: function(){
 			// summary:
 			//		install touch listeners
-			this._touchStartListener = this._map.surface.connect("touchstart", this, this._touchStartHandler);
+			this._touchStartListener = this.map.surface.connect("touchstart", this, this._touchStartHandler);
 		},
 
 		disconnect: function(){
@@ -72,7 +72,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			}else{
 				secondTouch = touches[0];
 			}
-			var containerBounds = this._map._getContainerBounds();
+			var containerBounds = this.map._getContainerBounds();
 			var middleX = (firstTouch.pageX + secondTouch.pageX) / 2.0 - containerBounds.x;
 			var middleY = (firstTouch.pageY + secondTouch.pageY) / 2.0 - containerBounds.y;
 			return {x: middleX,y: middleY}; // dojox/gfx/Point
@@ -136,17 +136,17 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			//		private
 			var feature = this._getFeatureFromTouchEvent(touchEvent);
 			if(feature){
-				this._map.fitToMapArea(feature._bbox, 15, true);
+				this.map.fitToMapArea(feature._bbox, 15, true);
 			}else{
 				// perform a basic 2x zoom on touch
 				var touches = touchEvent.touches;
-				var containerBounds = this._map._getContainerBounds();
+				var containerBounds = this.map._getContainerBounds();
 				var offX = touches[0].pageX - containerBounds.x;
 				var offY = touches[0].pageY - containerBounds.y;
 				// clicked map point before zooming
-				var mapPoint = this._map.screenCoordsToMapCoords(offX,offY);
+				var mapPoint = this.map.screenCoordsToMapCoords(offX,offY);
 				// zoom increment power
-				this._map.setMapCenterAndScale(mapPoint.x, mapPoint.y,this._map.getMapScale()*2,true);
+				this.map.setMapCenterAndScale(mapPoint.x, mapPoint.y,this.map.getMapScale()*2,true);
 			}
 		},
 
@@ -161,7 +161,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			//		private
 			var feature = null;
 			if(touchEvent.gfxTarget && touchEvent.gfxTarget.getParent){
-				feature = this._map.mapObj.features[touchEvent.gfxTarget.getParent().id];
+				feature = this.map.mapObj.features[touchEvent.gfxTarget.getParent().id];
 			}
 			return feature;	// dojox/geo/charting/Feature
 		},
@@ -186,19 +186,19 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			}
 			// compute map midpoint between fingers
 			var middlePoint = this._getTouchBarycenter(touchEvent);
-			var mapPoint = this._map.screenCoordsToMapCoords(middlePoint.x,middlePoint.y);
+			var mapPoint = this.map.screenCoordsToMapCoords(middlePoint.x,middlePoint.y);
 			this._centerTouchLocation.x = mapPoint.x;
 			this._centerTouchLocation.y = mapPoint.y;
 			// store initial finger spacing to compute zoom later
 			this._initialFingerSpacing = this._getFingerSpacing(touchEvent);
 			// store initial map scale
-			this._initialScale = this._map.getMapScale();
+			this._initialScale = this.map.getMapScale();
 			// install touch move and up listeners (if not done by other fingers before)
 			if(!this._touchMoveListener){
 				this._touchMoveListener = connect.connect(win.global,"touchmove",this,this._touchMoveHandler);
 			}
 			if(!this._touchEndTapListener){
-				this._touchEndTapListener = this._map.surface.connect("touchend", this, this._touchEndTapHandler);
+				this._touchEndTapListener = this.map.surface.connect("touchend", this, this._touchEndTapHandler);
 			}
 			if(!this._touchEndListener){
 				this._touchEndListener = connect.connect(win.global,"touchend",this, this._touchEndHandler);
@@ -260,7 +260,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			}else{
 				// recompute touch center
 				var middlePoint = this._getTouchBarycenter(touchEvent);
-				var mapPoint = this._map.screenCoordsToMapCoords(middlePoint.x,middlePoint.y);
+				var mapPoint = this.map.screenCoordsToMapCoords(middlePoint.x,middlePoint.y);
 				this._centerTouchLocation.x = mapPoint.x;
 				this._centerTouchLocation.y = mapPoint.y;
 			}
@@ -279,10 +279,10 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 				feature._onclickHandler(touchEvent);
 			}else{
 				// unselect all
-				for(var name in this._map.mapObj.features){
-					this._map.mapObj.features[name].select(false);
+				for(var name in this.map.mapObj.features){
+					this.map.mapObj.features[name].select(false);
 				}
-				this._map.onFeatureClick(null);
+				this.map.onFeatureClick(null);
 			}
 		},
 
@@ -308,7 +308,7 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 			}
 			var middlePoint = this._getTouchBarycenter(touchEvent);
 			// compute map offset
-			var mapPoint = this._map.screenCoordsToMapCoords(middlePoint.x,middlePoint.y),
+			var mapPoint = this.map.screenCoordsToMapCoords(middlePoint.x,middlePoint.y),
 				mapOffsetX = mapPoint.x - this._centerTouchLocation.x,
 				mapOffsetY = mapPoint.y - this._centerTouchLocation.y;
 			// compute scale factor
@@ -318,11 +318,11 @@ define("dojox/geo/charting/TouchInteractionSupport", [
 				var fingerSpacing = this._getFingerSpacing(touchEvent);
 				scaleFactor = fingerSpacing / this._initialFingerSpacing;
 				// scale map
-				this._map.setMapScale(this._initialScale*scaleFactor);
+				this.map.setMapScale(this._initialScale*scaleFactor);
 			}
 			// adjust map center on barycentre
-			var currentMapCenter = this._map.getMapCenter();
-			this._map.setMapCenter(currentMapCenter.x - mapOffsetX, currentMapCenter.y - mapOffsetY);
+			var currentMapCenter = this.map.getMapCenter();
+			this.map.setMapCenter(currentMapCenter.x - mapOffsetX, currentMapCenter.y - mapOffsetY);
 		}
 	});
 });

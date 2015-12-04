@@ -442,7 +442,7 @@ var JsonRestStore = declare("dojox.data.JsonRestStore", ServiceStore,
 				store = serviceAndId.service._store;
 				args.identity = serviceAndId.id;
 			}
-			args._prefix = store.service.servicePath.replace(/[^\/]*$/,'');
+			args.prefix = store.service.servicePath.replace(/[^\/]*$/,'');
 			return store.inherited(arguments);
 		},
 		//Notifcation Support

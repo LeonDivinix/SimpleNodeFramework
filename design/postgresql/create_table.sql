@@ -20,7 +20,7 @@ create table s_l_sys_operate (
 	remark varchar(200) default '',
 	
 	create_time timestamp default now(),
-	create_by char(36) not null,
+	create_by uuid not null,
 	primary key(id)
 );
 comment on column s_l_sys_operate.table_name is '表名称';
@@ -45,9 +45,9 @@ create table s_t_menu (
 	
 	status smallint not null default '1',
 	create_time timestamp default now(),
-	create_by char(36) not null,
+	create_by uuid not null,
 	update_time timestamp,
-	update_by char(36),
+	update_by uuid,
 	primary key(id)
 );
 comment on column s_t_menu.pid is '父级id';
@@ -79,9 +79,9 @@ create table s_t_role (
 	
 	status smallint not null default '1',
 	create_time timestamp default now(),
-	create_by char(36) not null,
+	create_by uuid not null,
 	update_time timestamp default null,
-	update_by char(36) default null,
+	update_by uuid default null,
 	primary key(id)
 );
 comment on column s_t_role.pid is '父级id';
@@ -100,9 +100,9 @@ create table s_r_role_menu (
 	privilege int default 0,
 	
 	create_time timestamp default now(),
-	create_by char(36) not null,
+	create_by uuid not null,
 	update_time timestamp default null,
-	update_by char(36) default null,
+	update_by uuid default null,
 	primary key(id)
 );
 comment on column s_r_role_menu.menu_id is '菜单id';
@@ -135,9 +135,9 @@ create table s_t_user (
 	
 	status smallint not null default '1',
 	create_time timestamp default now(),
-	create_by char(36) not null,
+	create_by uuid not null,
 	update_time timestamp default null,
-	update_by char(36) default null,
+	update_by uuid default null,
 	primary key(id)
 );
 comment on column s_t_user.name is '登陆名';

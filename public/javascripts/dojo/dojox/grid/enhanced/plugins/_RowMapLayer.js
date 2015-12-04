@@ -18,7 +18,7 @@ return _a?_4.hitch(_9||_3.global,_a):function(){
 };
 };
 return _2("dojox.grid.enhanced.plugins._RowMapLayer",_5._StoreLayer,{tags:["reorder"],constructor:function(_b){
-this._map={};
+this.map={};
 this._revMap={};
 this.grid=_b;
 this._oldOnDelete=_b._onDelete;
@@ -58,10 +58,10 @@ delete this._revMap[_10];
 _11=_10;
 }
 if(_11==to){
-delete this._map[_11];
+delete this.map[_11];
 _12[to]="eq";
 }else{
-this._map[_11]=to;
+this.map[_11]=to;
 _12[to]=_11;
 }
 }
@@ -74,13 +74,13 @@ this._revMap[parseInt(to,10)]=_12[to];
 }
 }
 },clearMapping:function(){
-this._map={};
+this.map={};
 this._revMap={};
 },_onDelete:function(_13){
 var idx=this.grid._getItemIndex(_13,true);
 if(idx in this._revMap){
 var _14=[],r,i,_15=this._revMap[idx];
-delete this._map[_15];
+delete this.map[_15];
 delete this._revMap[idx];
 for(r in this._revMap){
 r=parseInt(r,10);
@@ -102,9 +102,9 @@ r=_14[i];
 this._revMap[r-1]=this._revMap[r];
 delete this._revMap[r];
 }
-this._map={};
+this.map={};
 for(r in this._revMap){
-this._map[this._revMap[r]]=r;
+this.map[this._revMap[r]]=r;
 }
 }
 },_fetch:function(_16){

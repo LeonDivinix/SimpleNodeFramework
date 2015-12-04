@@ -196,7 +196,7 @@ var _44=_5.getServiceAndId(id);
 _43=_44.service._store;
 _42.identity=_44.id;
 }
-_42._prefix=_43.service.servicePath.replace(/[^\/]*$/,"");
+_42.prefix=_43.service.servicePath.replace(/[^\/]*$/,"");
 return _43.inherited(arguments);
 },onSet:function(){
 },onNew:function(){

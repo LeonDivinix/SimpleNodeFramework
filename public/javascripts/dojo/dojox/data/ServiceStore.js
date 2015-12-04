@@ -127,7 +127,7 @@ return _28.__id;
 },getIdentityAttributes:function(_29){
 return [this.idAttribute];
 },fetchItemByIdentity:function(_2a){
-var _2b=this._index[(_2a._prefix||"")+_2a.identity];
+var _2b=this._index[(_2a.prefix||"")+_2a.identity];
 if(_2b){
 if(_2b._loadObject){
 _2a.item=_2b;

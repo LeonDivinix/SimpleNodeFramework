@@ -27,7 +27,7 @@ hitchIfCan = function(scope, func){
 return declare("dojox.grid.enhanced.plugins._RowMapLayer", layers._StoreLayer, {
 	tags: ["reorder"],
 	constructor: function(grid){
-		this._map = {};
+		this.map = {};
 		this._revMap = {};
 		this.grid = grid;
 		this._oldOnDelete = grid._onDelete;
@@ -71,10 +71,10 @@ return declare("dojox.grid.enhanced.plugins._RowMapLayer", layers._StoreLayer, {
 					origin = from;
 				}
 				if(origin == to){
-					delete this._map[origin];
+					delete this.map[origin];
 					revmap[to] = "eq";
 				}else{
-					this._map[origin] = to;
+					this.map[origin] = to;
 					revmap[to] = origin;
 				}
 			}
@@ -88,14 +88,14 @@ return declare("dojox.grid.enhanced.plugins._RowMapLayer", layers._StoreLayer, {
 		}
 	},
 	clearMapping: function(){
-		this._map = {};
+		this.map = {};
 		this._revMap = {};
 	},
 	_onDelete: function(item){
 		var idx = this.grid._getItemIndex(item, true);
 		if(idx in this._revMap){
 			var rowIdxArr = [], r, i, origin = this._revMap[idx];
-			delete this._map[origin];
+			delete this.map[origin];
 			delete this._revMap[idx];
 			for(r in this._revMap){
 				r = parseInt(r, 10);
@@ -117,9 +117,9 @@ return declare("dojox.grid.enhanced.plugins._RowMapLayer", layers._StoreLayer, {
 				this._revMap[r - 1] = this._revMap[r];
 				delete this._revMap[r];
 			}
-			this._map = {};
+			this.map = {};
 			for(r in this._revMap){
-				this._map[this._revMap[r]] = r;
+				this.map[this._revMap[r]] = r;
 			}
 		}
 	},

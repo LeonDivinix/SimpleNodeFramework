@@ -19,7 +19,7 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 		//		on ESC. Finally, while it has the focus, the map should lose the focus on TAB.
 		// tags:
 		//		private
-		_map: null,
+		map: null,
 		_zoomEnabled: false,
 
 		constructor: function(/*dojox/geo/charting/Map*/ map, /*Object?*/ options){
@@ -31,7 +31,7 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 			//		An object defining additional configuration properties. Currently,
 			//		only the enableZoom property of this object is taken into account to enable/disable
 			//		the Map zooming capability.
-			this._map = map;
+			this.map = map;
 			if(options){
 				this._zoomEnabled = options.enableZoom;
 			}
@@ -39,7 +39,7 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 		connect: function(){
 			// summary:
 			//		connects this keyboard support class to the Map component
-			var container = dom.byId(this._map.container);
+			var container = dom.byId(this.map.container);
 			//	tab accessing enable
 			html.attr(container, {
 				tabindex: 0,
@@ -80,13 +80,13 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 					this._directTo(-1,1,-1,-1);
 					break;
 				case keys.SPACE:
-					if(this._map.selectedFeature && !this._map.selectedFeature._isZoomIn && this._zoomEnabled){
-						this._map.selectedFeature._zoomIn();
+					if(this.map.selectedFeature && !this.map.selectedFeature._isZoomIn && this._zoomEnabled){
+						this.map.selectedFeature._zoomIn();
 					}
 					break;
 				case keys.ESCAPE:
-					if(this._map.selectedFeature && this._map.selectedFeature._isZoomIn && this._zoomEnabled){
-						this._map.selectedFeature._zoomOut();
+					if(this.map.selectedFeature && this.map.selectedFeature._isZoomIn && this._zoomEnabled){
+						this.map.selectedFeature._zoomOut();
 					}
 					break;
 				default:
@@ -101,17 +101,17 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 			//		An event.
 
 			// select the leading region at the map center
-			if(this._map.selectedFeature || this._map.focused){return;}
-			this._map.focused = true;
+			if(this.map.selectedFeature || this.map.focused){return;}
+			this.map.focused = true;
 			var leadingRegion,
 				needClick = false;
-			if(this._map.lastSelectedFeature){
-				leadingRegion = this._map.lastSelectedFeature;
+			if(this.map.lastSelectedFeature){
+				leadingRegion = this.map.lastSelectedFeature;
 			}else{
-				var mapCenter = this._map.getMapCenter(),
+				var mapCenter = this.map.getMapCenter(),
 					minDistance = Infinity;
 				// find the region most closing to the map center
-				functional.forIn(this._map.mapObj.features, function(feature){
+				functional.forIn(this.map.mapObj.features, function(feature){
 					var distance = Math.sqrt(Math.pow(feature._center[0] - mapCenter.x, 2) + Math.pow(feature._center[1] - mapCenter.y, 2));
 					if(distance < minDistance){
 						minDistance = distance;
@@ -124,21 +124,21 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 				if(needClick){
 					leadingRegion._onclickHandler(null);
 				}
-				this._map.mapObj.marker.show(leadingRegion.id);
+				this.map.mapObj.marker.show(leadingRegion.id);
 			}
 		},
 		onBlur: function(){
 			// summary:
 			//		Handles the onBlur event.
-			this._map.lastSelectedFeature = this._map.selectedFeature;
+			this.map.lastSelectedFeature = this.map.selectedFeature;
 		},
 		_directTo: function(up, down, left, right){
-			var currentSelected = this._map.selectedFeature,
+			var currentSelected = this.map.selectedFeature,
 			centerX = currentSelected._center[0],
 			centerY = currentSelected._center[1],
 			minMargin = Infinity,
 			nextSelected = null;
-			functional.forIn(this._map.mapObj.features, function(feature){
+			functional.forIn(this.map.mapObj.features, function(feature){
 				var paddingX = Math.abs(centerX - feature._center[0]),
 				paddingY = Math.abs(centerY - feature._center[1]),
 				paddingSum = paddingX + paddingY;
@@ -156,9 +156,9 @@ define("dojox/geo/charting/KeyboardInteractionSupport", [
 				}
 			});
 			if(nextSelected){
-				this._map.mapObj.marker.hide();
+				this.map.mapObj.marker.hide();
 				nextSelected._onclickHandler(null);
-				this._map.mapObj.marker.show(nextSelected.id);
+				this.map.mapObj.marker.show(nextSelected.id);
 			}
 		}
 	});

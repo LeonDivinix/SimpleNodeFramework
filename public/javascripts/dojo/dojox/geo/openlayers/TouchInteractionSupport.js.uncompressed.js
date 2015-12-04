@@ -13,7 +13,7 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 		// tags:
 		//		private
 
-		_map: null,
+		map: null,
 		_centerTouchLocation: null,
 		_touchMoveListener: null,
 		_touchEndListener: null,
@@ -28,10 +28,10 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 			//		Constructs a new TouchInteractionSupport instance
 			// map: OpenLayers.Map
 			//		the Map widget this class provides touch navigation for.
-			this._map = map;
+			this.map = map;
 			this._centerTouchLocation = new OpenLayers.LonLat(0, 0);
 
-			var div = this._map.div;
+			var div = this.map.div;
 
 			// install touch listeners
 			connect.connect(div, "touchstart", this, this._touchStartHandler);
@@ -65,7 +65,7 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 				secondTouch = touches[0];
 			}
 
-			var marginBox = html.marginBox(this._map.div);
+			var marginBox = html.marginBox(this.map.div);
 
 			var middleX = (firstTouch.pageX + secondTouch.pageX) / 2.0 - marginBox.l;
 			var middleY = (firstTouch.pageY + secondTouch.pageY) / 2.0 - marginBox.t;
@@ -139,13 +139,13 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 
 			// perform a basic 2x zoom on touch
 			var touches = touchEvent.touches;
-			var marginBox = html.marginBox(this._map.div);
+			var marginBox = html.marginBox(this.map.div);
 			var offX = touches[0].pageX - marginBox.l;
 			var offY = touches[0].pageY - marginBox.t;
 			// clicked map point before zooming
-			var mapPoint = this._map.getLonLatFromPixel(new OpenLayers.Pixel(offX, offY));
+			var mapPoint = this.map.getLonLatFromPixel(new OpenLayers.Pixel(offX, offY));
 			// zoom increment power
-			this._map.setCenter(new OpenLayers.LonLat(mapPoint.lon, mapPoint.lat), this._map.getZoom() + 1);
+			this.map.setCenter(new OpenLayers.LonLat(mapPoint.lon, mapPoint.lat), this.map.getZoom() + 1);
 		},
 
 		_touchStartHandler: function(touchEvent){
@@ -166,13 +166,13 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 			// compute map midpoint between fingers		
 			var middlePoint = this._getTouchBarycenter(touchEvent);
 
-			this._centerTouchLocation = this._map.getLonLatFromPixel(new OpenLayers.Pixel(middlePoint.x, middlePoint.y));
+			this._centerTouchLocation = this.map.getLonLatFromPixel(new OpenLayers.Pixel(middlePoint.x, middlePoint.y));
 
 			// store initial finger spacing to compute zoom later
 			this._initialFingerSpacing = this._getFingerSpacing(touchEvent);
 
 			// store initial map scale
-			this._initialScale = this._map.getScale();
+			this._initialScale = this.map.getScale();
 
 			// install touch move and up listeners (if not done by other fingers before)
 			if(!this._touchMoveListener){
@@ -208,7 +208,7 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 				// recompute touch center
 				var middlePoint = this._getTouchBarycenter(touchEvent);
 
-				this._centerTouchLocation = this._map.getLonLatFromPixel(new OpenLayers.Pixel(middlePoint.x, middlePoint.y));
+				this._centerTouchLocation = this.map.getLonLatFromPixel(new OpenLayers.Pixel(middlePoint.x, middlePoint.y));
 			}
 		},
 
@@ -226,7 +226,7 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 			var middlePoint = this._getTouchBarycenter(touchEvent);
 
 			// compute map offset
-			var mapPoint = this._map.getLonLatFromPixel(new OpenLayers.Pixel(middlePoint.x, middlePoint.y));
+			var mapPoint = this.map.getLonLatFromPixel(new OpenLayers.Pixel(middlePoint.x, middlePoint.y));
 			var mapOffsetLon = mapPoint.lon - this._centerTouchLocation.lon;
 			var mapOffsetLat = mapPoint.lat - this._centerTouchLocation.lat;
 
@@ -237,12 +237,12 @@ define("dojox/geo/openlayers/TouchInteractionSupport", [
 				var fingerSpacing = this._getFingerSpacing(touchEvent);
 				scaleFactor = fingerSpacing / this._initialFingerSpacing;
 				// weird openlayer bug: setting several times the same scale value lead to visual zoom...
-				this._map.zoomToScale(this._initialScale / scaleFactor);
+				this.map.zoomToScale(this._initialScale / scaleFactor);
 			}
 
 			// adjust map center on barycenter
-			var currentMapCenter = this._map.getCenter();
-			this._map.setCenter(new OpenLayers.LonLat(currentMapCenter.lon - mapOffsetLon, currentMapCenter.lat
+			var currentMapCenter = this.map.getCenter();
+			this.map.setCenter(new OpenLayers.LonLat(currentMapCenter.lon - mapOffsetLon, currentMapCenter.lat
 																																											- mapOffsetLat));
 
 		}

@@ -6,7 +6,8 @@ CREATE TYPE table_struct AS (
 	"defaultValue" VARCHAR(100),
 	"comment" VARCHAR(500),
 	"unique" bool,
-	"primaryKey" bool
+	"primaryKey" bool,
+	"fieldLength" bigint
 );
 	
 CREATE OR REPLACE FUNCTION to_sequelize_data_type(field_type varchar) RETURNS varchar AS
@@ -20,6 +21,7 @@ BEGIN
 		ELSIF field_type = 'bpchar' THEN func_result := 'CHAR';
 		ELSIF field_type = 'timestamp' THEN func_result := 'TIME';
 		ELSIF field_type = 'json' THEN func_result := 'JSONTYPE';
+		ELSIF field_type = 'varchar' THEN func_result := 'STRING';
 	ELSE
 		func_result := upper(field_type);
 	 END IF;
@@ -47,7 +49,8 @@ BEGIN
 		COALESCE(pg_attrdef.adsrc, '''') "defaultValue",
 		COALESCE(pg_description.description, '''') "comment",
 		COALESCE(indisunique, false) "unique",
-		COALESCE(indisprimary, false) "primaryKey"
+		COALESCE(indisprimary, false) "primaryKey",
+		pg_attribute.atttypmod - 4 as fieldLength
 	FROM
 		pg_attribute
 		INNER JOIN pg_class  ON (pg_attribute.attrelid = pg_class.oid and pg_class.relname=''' || table_name || ''')
@@ -65,7 +68,7 @@ BEGIN
 	ORDER BY "index")
 	union all
 	(
-		'SELECT
+		SELECT
         pa.attname "field",
         pa.attnum "index",
         pt.typname "type",
@@ -73,12 +76,13 @@ BEGIN
         '''' "defaultValue",
         '''' "comment",
         false "unique",
-        false "primaryKey"
+        false "primaryKey",
+        pa.atttypmod - 4 as fieldLength
         from
         pg_attribute pa
         INNER JOIN pg_class pc on (pc.relkind=''v'' and pc.relname=''' || table_name || ''' and pa.attrelid = pc.oid)
         INNER JOIN pg_namespace pn on (pc.relnamespace = pn.oid AND lower(pn.nspname) = ''' || schema_name || ''')
-        INNER JOIN pg_type pt ON (pa.atttypid = pt.oid)'
+        INNER JOIN pg_type pt ON (pa.atttypid = pt.oid)
 	)
 	';
 
