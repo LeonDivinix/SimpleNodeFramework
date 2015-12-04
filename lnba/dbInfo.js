@@ -7,5 +7,6 @@ var special = require("./db/" + dbConfig.dbDialect);
 var dbInfo = {
     dbConfig: dbConfig,
     getFields: special.getFields
+    //
 };
 module.exports = dbInfo;
